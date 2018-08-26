@@ -34,7 +34,7 @@ namespace Embeddinator.Tests
         {
             GenerateAssembly();
             XamarinAndroidBuild.GenerateAndroidManifest(new[] { universe.LoadFile(temp) }, manifestPath, true);
-            Approvals.VerifyFile(manifestPath);
+            Approvals.VerifyFile(manifestPath, true);
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace Embeddinator.Tests
 
             GenerateAssembly();
             XamarinAndroidBuild.GenerateAndroidManifest(new[] { universe.LoadFile(temp) }, manifestPath, true);
-            Approvals.VerifyFile(manifestPath);
+            Approvals.VerifyFile(manifestPath, true);
         }
 
         [Test]
@@ -56,7 +56,7 @@ namespace Embeddinator.Tests
 
             GenerateAssembly();
             XamarinAndroidBuild.GenerateAndroidManifest(new[] { universe.LoadFile(temp) }, manifestPath, true);
-            Approvals.VerifyFile(manifestPath);
+            Approvals.VerifyFile(manifestPath, true);
         }
     }
 }

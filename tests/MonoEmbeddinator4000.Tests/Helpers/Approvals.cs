@@ -53,12 +53,29 @@ namespace Embeddinator.Tests
         /// Verifies an existing file against the approved text on disk.
         /// - Make sure to call this method directly from the unit test method, so that [CallerFilePath] works properly
         /// </summary>
-        public static void VerifyFile(string filePath, [CallerFilePath]string sourceFile = null, [CallerMemberName]string member = null)
+        public static void VerifyFile(string filePath, bool ignoreNewLine = false, [CallerFilePath]string sourceFile = null, [CallerMemberName]string member = null)
         {
             string received = GetPath(sourceFile, member, "received");
             string approved = GetPath(sourceFile, member, "approved");
             File.Copy(filePath, received, true);
-            FileAssert.AreEqual(approved, received);
+
+            if (ignoreNewLine)
+            {
+                using (StreamReader receivedStream = File.OpenText(received))
+                using (StreamReader approvedStream = File.OpenText(approved))
+                {
+                    while (!receivedStream.EndOfStream)
+                    {
+                        if (receivedStream.ReadLine() != approvedStream.ReadLine()) Assert.Fail();
+                        if (receivedStream.EndOfStream != approvedStream.EndOfStream) Assert.Fail();
+                    }
+                    Assert.Pass();
+                }
+            }
+            else
+            {
+                FileAssert.AreEqual(approved, received);
+            }
             File.Delete(received);
         }
 
@@ -100,7 +117,7 @@ namespace Embeddinator.Tests
 #endif
             string approved = GetPath(sourceFile, member, "approved");
             File.Copy(filePath, approved, true);
-            VerifyFile(filePath, sourceFile, member);
+            VerifyFile(filePath, false, sourceFile, member);
         }
 
         /// <summary>
