@@ -16,6 +16,7 @@ namespace Embeddinator.Tests
     public class DriverTest : TempFileTest
     {
         string outputDir;
+        string outputName;
         Project project;
         Options options;
         Driver driver;
@@ -29,7 +30,8 @@ namespace Embeddinator.Tests
             if (!Directory.Exists(outputDir))
                 Directory.CreateDirectory(outputDir);
 
-            temp = Path.Combine(outputDir, "hello.dll");
+            outputName = "hello";
+            temp = Path.Combine(outputDir, outputName + ".dll");
             tempFiles = new List<string> { temp, outputDir };
 
             project = new Project();
@@ -49,6 +51,7 @@ namespace Embeddinator.Tests
             {
                 parameters = new CompilerParameters();
             }
+
             parameters.OutputAssembly = temp;
             AssemblyGenerator.CreateFromResource(resourceFile, parameters);
 
@@ -142,8 +145,8 @@ namespace Embeddinator.Tests
             options.GeneratorKind = GeneratorKind.Java;
             RunDriver("Hello");
 
-            var aar = Path.Combine(options.OutputDir, "Hello.jar");
-            Approvals.VerifyZipFile(aar);
+            var jar = Path.Combine(options.OutputDir, outputName + ".jar");
+            Approvals.VerifyZipFile(jar);
         }
 
         [Test, Category("Slow")]
@@ -155,7 +158,7 @@ namespace Embeddinator.Tests
             options.GeneratorKind = GeneratorKind.Java;
             RunDriver("Hello");
 
-            var aar = Path.Combine(options.OutputDir, "Hello.aar");
+            var aar = Path.Combine(options.OutputDir, outputName + ".aar");
             Approvals.VerifyZipFile(aar);
         }
 
@@ -169,7 +172,7 @@ namespace Embeddinator.Tests
             options.GeneratorKind = GeneratorKind.Java;
             RunDriver("Hello");
 
-            var aar = Path.Combine(options.OutputDir, "Hello.aar");
+            var aar = Path.Combine(options.OutputDir, outputName + ".aar");
             Approvals.VerifyZipFile(aar);
         }
 
@@ -235,7 +238,7 @@ namespace Embeddinator.Tests
             options.GeneratorKind = GeneratorKind.Java;
             RunDriver("Hello", parameters);
 
-            var aar = Path.Combine(options.OutputDir, "Hello.aar");
+            var aar = Path.Combine(options.OutputDir, outputName + ".aar");
             Approvals.VerifyZipFile(aar);
         }
 
@@ -255,7 +258,7 @@ namespace Embeddinator.Tests
             options.GeneratorKind = GeneratorKind.Java;
             RunDriver("Hello", parameters);
 
-            var aar = Path.Combine(options.OutputDir, "Hello.aar");
+            var aar = Path.Combine(options.OutputDir, outputName + ".aar");
             Approvals.VerifyZipFile(aar);
         }
 
@@ -284,7 +287,7 @@ namespace Embeddinator.Tests
             options.GeneratorKind = GeneratorKind.Java;
             RunDriver("Hello", parameters);
 
-            var aar = Path.Combine(options.OutputDir, "Hello.aar");
+            var aar = Path.Combine(options.OutputDir, outputName + ".aar");
             Approvals.VerifyZipFile(aar);
         }
     }

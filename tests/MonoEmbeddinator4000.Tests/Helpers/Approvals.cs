@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.CompilerServices;
@@ -21,18 +22,18 @@ namespace Embeddinator.Tests
             return Path.Combine(basePath, fileName);
         }
 
-        static string ZipFiles(string filePath)
+        static List<string> ZipFiles(string filePath)
         {
-            var builder = new StringBuilder();
+            List<string> fileNames = new List<string>();
             using (var stream = File.OpenRead(filePath))
             using (var zip = new ZipArchive(stream))
             {
                 foreach (var entry in zip.Entries)
                 {
-                    builder.AppendLine(entry.FullName);
+                    fileNames.Add(entry.FullName);
                 }
             }
-            return builder.ToString();
+            return fileNames;
         }
 
         /// <summary>
@@ -62,12 +63,14 @@ namespace Embeddinator.Tests
         }
 
         /// <summary>
-        /// Verifies the list of filenames in a zip archive against the approved text on disk.
+        /// Verifies the list of filenames in a zip archive against the approved text on disk. Unaffected by order.
         /// - Make sure to call this method directly from the unit test method, so that [CallerFilePath] works properly
         /// </summary>
         public static void VerifyZipFile(string filePath, [CallerFilePath]string sourceFile = null, [CallerMemberName]string member = null)
         {
-            Verify(ZipFiles(filePath), sourceFile, member);
+            IEnumerable<string> recieved = ZipFiles(filePath);
+            IEnumerable<string> approved = File.ReadAllLines(GetPath(sourceFile, member, "approved"));
+            CollectionAssert.AreEquivalent(approved, recieved);
         }
 
         /// <summary>
@@ -111,7 +114,7 @@ namespace Embeddinator.Tests
             Assert.Fail("This test is using Approvals.ApproveZipFile() when it should be using Approvals.VerifyZipFile()!");
 #endif
             string approved = GetPath(sourceFile, member, "approved");
-            File.WriteAllText(approved, ZipFiles(filePath));
+            File.WriteAllText(approved, string.Join(Environment.NewLine, ZipFiles(filePath)));
             VerifyZipFile(filePath, sourceFile, member);
         }
     }
